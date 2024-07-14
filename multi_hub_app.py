@@ -5,24 +5,24 @@ import pyomo.environ as pyo
 # Streamlit app title
 st.title("Multiple-Allocation Problem with Interconnected Hubs")
 
-st.markdown('### Description of the Model')
-st.write('''
+# Description of the Model
+st.markdown("""
+### Description of the Model
 
-        The model is a multiple-allocation problem with interconnected hubs.
-        
-        The objective is to minimize the total cost of allocating goods from multiple origins to multiple destinations.
-        
-        The cost of allocating goods from origin i to destination j is the sum of the cost of allocating goods from origin i to hub k and from hub m to destination j.
-        
-        The number of hubs to be used is a parameter that can be modified.
-        
-        The model is formulated as a mixed-integer linear programming problem.
-        
-        The model is solved using the CBC solver.
-          
-          ---
-          ''')
+The model is a multiple-allocation problem with interconnected hubs.
 
+The objective is to minimize the total cost of allocating goods from multiple origins to multiple destinations.
+
+The cost of allocating goods from origin i to destination j is the sum of the cost of allocating goods from origin i to hub k and from hub m to destination j.
+
+The number of hubs to be used is a parameter that can be modified.
+
+The model is formulated as a mixed-integer linear programming problem.
+
+The model is solved using the CBC solver.
+
+---
+""")
 
 # Optional file upload
 uploaded_file = st.file_uploader("Upload Cost Matrix Excel file", type=["xlsx"])
@@ -30,18 +30,17 @@ uploaded_file = st.file_uploader("Upload Cost Matrix Excel file", type=["xlsx"])
 if uploaded_file is not None:
     cost_df = pd.read_excel(uploaded_file)
 else:
-
     # Load the data into a DataFrame
-    # cost_df = pd.read_excel('Multi_Allocation_Hub_Location_Problem/cost_matrix_multi_hub.xlsx')
-    cost_df = pd.read_excel('cost_matrix_multi_hub.xlsx')
-
+    try:
+        cost_df = pd.read_excel('cost_matrix_multi_hub.xlsx')
+    except FileNotFoundError:
+        st.error("Default cost matrix file 'cost_matrix_multi_hub.xlsx' not found. Please upload an Excel file.")
+        st.stop()
 
 # Load the data into a DataFrame
-# cost_df = pd.DataFrame(cost_data)
 cost_df.set_index('Origin/Destination', inplace=True)
 st.write("Cost Matrix:")
 editable_cost_df = st.data_editor(cost_df)
-
 
 # Transform the DataFrame into a dictionary for combined costs c(i, k, m, j)
 cost = {}
@@ -64,9 +63,7 @@ model = pyo.ConcreteModel()
 # Number of hubs to be used (modifiable via Streamlit)
 p = st.slider("Number of hubs to be used", min_value=2, max_value=len(hubs), value=5)
 
-
 if st.button('Calculate'):
-
     # Define sets
     model.pairs = pyo.Set(initialize=pairs, dimen=2)
     model.hub_pairs = pyo.Set(initialize=hub_pairs, dimen=2)
@@ -79,7 +76,7 @@ if st.button('Calculate'):
     # Objective function: Minimize total cost
     def objective_rule(model):
         return sum(cost[(i, k, m, j)] * model.x[(i, j), (k, m)]
-                for (i, j) in model.pairs for (k, m) in model.hub_pairs)
+                   for (i, j) in model.pairs for (k, m) in model.hub_pairs)
 
     model.obj = pyo.Objective(rule=objective_rule, sense=pyo.minimize)
 
@@ -102,7 +99,7 @@ if st.button('Calculate'):
 
     model.flow_constraint_a = pyo.Constraint(pairs, hubs, rule=flow_constraint_a)
 
-    # Second flow constraint 
+    # Second flow constraint
     def flow_constraint_b(model, i, j, m):
         return sum(model.x[(i, j), (k, m)] for k in hubs if m != k) <= model.y[m]
 
@@ -111,8 +108,6 @@ if st.button('Calculate'):
     # Non-negativity and binary constraints are implicit in the variable definitions
 
     # Solve the model
-    # opt = pyo.SolverFactory('cbc', executable='Multi_Allocation_Hub_Location_Problem\\bin\\cbc.exe')  # Change solver if needed
-    # opt = pyo.SolverFactory('cbc', executable='cbc.exe')  # Change solver if needed
     opt = pyo.SolverFactory('cbc')
     results = opt.solve(model)
 
@@ -128,16 +123,8 @@ if st.button('Calculate'):
 
     st.write("\nAllocation Plan Table")
     st.write(allocation_plan[['Origin', 'Destination', 'First Hub', 'Second Hub']])
-    
 
 st.markdown('''
-            ---
-            
-            Created by [Lazuardi Al-Muzaki](https://github.com/Lazuardis)
-            
-            '''
-            )
-
-
-# running note
-# streamlit run multi_hub_app.py --server.enableXsrfProtection false
+---
+Created by [Lazuardi Al-Muzaki](https://github.com/Lazuardis)
+''')
