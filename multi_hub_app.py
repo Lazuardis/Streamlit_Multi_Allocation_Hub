@@ -9,11 +9,15 @@ st.markdown('### Description of the Model')
 st.write('''
 
         The model is a multiple-allocation problem with interconnected hubs.
+        
         The objective is to minimize the total cost of allocating goods from multiple origins to multiple destinations.
+        
         The cost of allocating goods from origin i to destination j is the sum of the cost of allocating goods from origin i to hub k and from hub m to destination j.
-        The model allows for the allocation of goods from multiple origins to multiple destinations through multiple interconnected hubs.
+        
         The number of hubs to be used is a parameter that can be modified.
+        
         The model is formulated as a mixed-integer linear programming problem.
+        
         The model is solved using the CBC solver.
           
           ---
