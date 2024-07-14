@@ -20,7 +20,7 @@ else:
 
 # Load the data into a DataFrame
 # cost_df = pd.DataFrame(cost_data)
-cost_df.set_index('Unnamed: 0', inplace=True)
+cost_df.set_index('Origin/Destination', inplace=True)
 st.write("Cost Matrix:")
 editable_cost_df = st.data_editor(cost_df)
 
