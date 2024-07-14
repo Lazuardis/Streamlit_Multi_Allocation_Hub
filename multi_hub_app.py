@@ -5,6 +5,20 @@ import pyomo.environ as pyo
 # Streamlit app title
 st.title("Multiple-Allocation Problem with Interconnected Hubs")
 
+st.markdown('### Description of the Model')
+set.write('''
+
+        The model is a multiple-allocation problem with interconnected hubs.
+        The objective is to minimize the total cost of allocating goods from multiple origins to multiple destinations.
+        The cost of allocating goods from origin i to destination j is the sum of the cost of allocating goods from origin i to hub k and from hub m to destination j.
+        The model allows for the allocation of goods from multiple origins to multiple destinations through multiple interconnected hubs.
+        The number of hubs to be used is a parameter that can be modified.
+        The model is formulated as a mixed-integer linear programming problem.
+        The model is solved using the CBC solver.
+          
+          ---
+          ''')
+
 
 # Optional file upload
 uploaded_file = st.file_uploader("Upload Cost Matrix Excel file", type=["xlsx"])
@@ -110,6 +124,15 @@ if st.button('Calculate'):
 
     st.write("\nAllocation Plan Table")
     st.write(allocation_plan[['Origin', 'Destination', 'First Hub', 'Second Hub']])
+    
+
+st.markdown('''
+            ---
+            
+            Created by [Lazuardi Al-Muzaki](https://github.com/Lazuardis)
+            
+            '''
+            )
 
 
 # running note
