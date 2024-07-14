@@ -6,7 +6,7 @@ import pyomo.environ as pyo
 st.title("Multiple-Allocation Problem with Interconnected Hubs")
 
 st.markdown('### Description of the Model')
-set.write('''
+st.write('''
 
         The model is a multiple-allocation problem with interconnected hubs.
         The objective is to minimize the total cost of allocating goods from multiple origins to multiple destinations.
