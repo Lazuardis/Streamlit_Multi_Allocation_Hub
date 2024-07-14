@@ -1,0 +1,5 @@
+streamlit
+pyomo
+pandas
+numpy==1.26.4
+openpyxl
